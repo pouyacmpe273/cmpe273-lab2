@@ -38,12 +38,20 @@ function get(request, response) {
 function post(request, response) {
 
 	// TODO: read 'name and email from the request.body'
-    request.body.getElementsByTagName("email")
-	var emailvar = request.body.email
-	var name = request.body.name
-	var newSessionId = login.login(name, emailvar);
+    var body = '';
+    request.on('name', function (data) {
+        name += data;
+
+
+    });
+    request.on('email', function (data2) {
+        email += data2;
+
+        // use post['blah'], etc.
+    });
+	var newSessionId = login.login(name, email);
 	// TODO: set new session id to the 'session_id' cookie in the response
-	response.sessionMap
+	response.sessionMap = newSessionId;
 	// replace "Logged In" response with response.end(login.hello(newSessionId));
     login.isLoggedIn().response = response.end(login.hello(newSessionId));
 
