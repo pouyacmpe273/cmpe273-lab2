@@ -36,34 +36,22 @@ function get(request, response) {
 };
 
 function post(request, response) {
-
 	// TODO: read 'name and email from the request.body'
-    var body = '';
-    request.on('name', function (data) {
-        name += data;
-
-
-    });
-    request.on('email', function (data2) {
-        email += data2;
-
-        // use post['blah'], etc.
-    });
-	var newSessionId = login.login(name, email);
+    var name = request.body.name;
+    var email = request.body.email;
+    // var newSessionId = login.login('xxx', 'xxx@gmail.com');
+    var newSessionId = login.login(name, email);
 	// TODO: set new session id to the 'session_id' cookie in the response
-	response.sessionMap = newSessionId;
+    response.setHeader('Set-Cookie', 'session_id=' +newSessionId);
 	// replace "Logged In" response with response.end(login.hello(newSessionId));
-    login.isLoggedIn().response = response.end(login.hello(newSessionId));
-
-
-	response.end("Logged In\n");
+//    response.end("Logged In\n");
+	response.end(login.hello(newSessionId));
 };
 
 function del(request, response) {
 	console.log("DELETE:: Logout from the server");
  	// TODO: remove session id via login.logout(xxx)
-    var session_id_variable = response.getResponseHeader("session_id")
-    session_id_variable.removeAttribute("session_id")
+    login.logout(request.cookies.session_id);
  	// No need to set session id in the response cookies since you just logged out!
 
   	response.end('Logged out from the server\n');
@@ -72,9 +60,8 @@ function del(request, response) {
 function put(request, response) {
 	console.log("PUT:: Re-generate new seesion_id for the same user");
 	// TODO: refresh session id; similar to the post() function
-    var new_session_id = request.body.getElementsByTagName("session_id");
-    var newSessionId = login.login(name, emailvar);
-    response.sessionMap = new_session_id
+    var newSessionId = request.cookies.session_id;
+    response.setHeader('Set-Cookie', 'session_id=' +newSessionId);
 	response.end("Re-freshed session id\n");
 };
 
